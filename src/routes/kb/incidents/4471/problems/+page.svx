@@ -4,7 +4,7 @@ title: '#4471 · what the merged reports show'
 owner: Brandon Newman
 status: open
 reviewed: 2026-10-31
-signature: Brandon Newman
+signature: v1.eyJzdWIiOiIyNTk2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTM0NjE0MjksImV4cCI6MTc5MzU0NzgyOX0.DvkTLFd3svKTfukBV1BQxLz2Br60xtjahbcEQ0cSs1k
 ---
 
 <script>
