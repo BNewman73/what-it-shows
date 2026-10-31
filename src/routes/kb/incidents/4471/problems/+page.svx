@@ -1,0 +1,70 @@
+---
+layout: runbook
+title: '#4471 · what the merged reports show'
+owner: Brandon Newman
+status: open
+reviewed: 2026-10-31
+signature: Brandon Newman
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+[#4471](/kb/incidents/4471) is marked known: one issue, one fix queued. Read by tenant and by the way
+each report came in, its reports are not one issue. They split into separate problems, and the queued
+parser fix closes only one of them. Each problem now has its own ticket.
+
+<Callout kind="warn">
+Do not close #4471 when the parser fix ships. The <code>hint</code> and <code>one-day</code> reports
+stay broken after it.
+</Callout>
+
+## What #4471 holds
+
+<ProblemTable
+  ticket={4471}
+  issues={{
+    parser: 'https://github.com/BNewman73/what-it-shows/issues/1',
+    hint: 'https://github.com/BNewman73/what-it-shows/issues/2',
+    'one-day': 'https://github.com/BNewman73/what-it-shows/issues/3',
+  }}
+/>
+
+## The problems
+
+**`parser`: the shared parser reads dates month first.** Every tenant on file writes the day first.
+A booking on 7 April goes out on 4 July. This is the fix #4471 already has queued.
+[Ticket](https://github.com/BNewman73/what-it-shows/issues/1).
+
+**`hint`: the booking-v3 form tells people to type month first.** booking-v3 prints `MM/DD/YYYY`
+under its date field, then reads the date in the tenant's order, day first. People type what the hint
+says, so the date is swapped before the parser sees it. Only reports that came in through that form,
+from tenants on booking-v3. The parser fix does not touch it.
+[Ticket](https://github.com/BNewman73/what-it-shows/issues/2).
+
+**`one-day`: bookings move by one day.** "Client in Lisbon got Tuesday. Client in Toronto got Monday.
+Same meeting." No day and month are swapped here, so neither fix above closes these. It looks like a
+time-zone or day-boundary problem. The desk had already read these reports as a one-day move
+(`desk-notes.json`), but #4471's table counts them under `parser` because of their tenant.
+[Ticket](https://github.com/BNewman73/what-it-shows/issues/3).
+
+## How the reports were placed
+
+- **One report per id.** The ticket export comes in overlapping pages, so some reports appear twice.
+- **By tenant, not by intake tag.** Intake guesses a tag from the reporter's browser. The tenant's
+  locale and booking form decide the cause (`src/lib/kb/causes.ts`). The two disagree often; the
+  table shows how often.
+- **One-day moves first.** A report the desk read as a one-day move is `one-day`, whatever its tenant
+  (`src/lib/kb/problems.ts`).
+- **Every body was read.** All other reports describe a day and month swapped, or say only that the
+  date was wrong.
+
+## Lessons
+
+- A big ticket can be several bugs with the same symptom. Count by cause, not by subject.
+- A footnote under a table is a finding nobody owns. Give it a ticket.
+
+<RenderStamp {signature} />

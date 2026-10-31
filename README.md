@@ -27,6 +27,15 @@ src/lib/data/       exports from the ticket system
 - A decision is never edited after it is accepted. A new record replaces it.
 - A page you add is signed: its frontmatter carries your `signature` and it ends with `<RenderStamp {signature} />`, so the desk knows who wrote it.
 
+## Build
+
+```
+npm install
+npm run build     # static site in build/, pages under build/kb/
+```
+
+`build/` is committed: it is the kb as the desk sees it.
+
 ## Owners
 
 Support desk. Decision records: whoever signed them.
